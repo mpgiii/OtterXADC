@@ -3,6 +3,18 @@
 
 #define conversionCycles 22
 
+#define adcAddress 0x12000000
+#define adcDataAddress 0x13000000
+
+#define configReg0 0x40
+#define configReg1 0x41
+#define configReg2 0x42
+
+//Address of ADC: 0x12000000 (it's like a pointer to a pointer)
+//     ^ it lets you choose what you want to change about the ADC
+//ADC Data: 0x13000000 (this is what you're writing to that pointer)
+
+
 int main()
 {
     
@@ -21,6 +33,27 @@ int main()
         getDclkDivider(dclkFreq, acqTime, conversionRate));
 
     return 0;
+}
+
+int readData(int address) {
+    int *hi = adcAddress;
+    int *hi2 = adcDataAddress;
+    *hi2 = address;
+    return *hi;
+    
+    
+}
+
+int writeData(int address) {
+    
+}
+
+void writeDclkDivider(int dclkDivider) {
+    int* address = adcAddress;
+    int* dataAddress = adcDataAddress;
+    
+    *adcAddress = configRed2;
+    *dataAddress = dclkDivider << 8;
 }
 
 int getDclkDivider(int dclkFrequency, int acqTime, int conversionRate) {
