@@ -10,9 +10,7 @@
 #define configReg1 0x41
 #define configReg2 0x42
 
-//Address of ADC: 0x12000000 (it's like a pointer to a pointer)
-//     ^ it lets you choose what you want to change about the ADC
-//ADC Data: 0x13000000 (this is what you're writing to that pointer)
+#define DENDWEaddress 0x14000000
 
 
 int main()
@@ -35,27 +33,34 @@ int main()
     return 0;
 }
 
-int readData(int address) {
-    int *hi = adcAddress;
-    int *hi2 = adcDataAddress;
-    *hi2 = address;
-    return *hi;
-    
-    
+void setDENandDWE() {
+    int* denAndDwe = DENDWEaddress;
+    *denAndDwe = 0x3;
 }
 
-int writeData(int address) {
-    
-}
-
+/* writeDclkDivider
+ * Input:  dclkDivider
+ * Output: none */
 void writeDclkDivider(int dclkDivider) {
     int* address = adcAddress;
     int* dataAddress = adcDataAddress;
     
-    *adcAddress = configRed2;
+    //set the address we are writing to to configReg2
+    *adcAddress = configReg2;
+    
+    //write the clock divider to that spot, bits shifted by 8 (other 8 unused)
     *dataAddress = dclkDivider << 8;
+    
+    //set DEN and DWE high so the ADC will actually read what we wrote
+    setDENandDWE();
 }
 
+
+/* getClkDivider
+ * Inputs: dclkFrequency (MHz)
+ *         acqTime (clock cycles)
+ *         conversionRate (KSPS)
+ * Output: clock divider value, rounded to nearest whole number */
 int getDclkDivider(int dclkFrequency, int acqTime, int conversionRate) {
     // dclkFrequency inputted in MHz
     // acqTime in clock cycles
