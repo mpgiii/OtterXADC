@@ -25,7 +25,7 @@
 
 #define dclkFreq 50 //in MHz
 #define acqTime 4 //in cycles. can only be 4 or 10
-#define conversionRate 50 //in KSPS
+#define convRate 50 //in KSPS
 
 
 void setDENandDWE() {
@@ -63,18 +63,20 @@ void writeDclkDivider(int dclkDivider, int* reg2) {
  *         acqTime (clock cycles)
  *         conversionRate (KSPS)
  * Output: clock divider value, rounded to nearest whole number */
-int getDclkDivider(int dclkFrequency, int acqTime, int conversionRate) {
+int getDclkDivider(int dclkFrequency, int acquireTime, int conversionRate) {
     // dclkFrequency inputted in MHz
-    // acqTime in clock cycles (can only be 4 or 10. 4 by default)
+    // acquireTime in clock cycles (can only be 4 or 10. 4 by default)
     // conversionRate inputted in KSPS
     
     // NOTE: multiplied by 1000 to account for dclkFrequency being in MHz.
     return round(1000 * ((double)dclkFrequency / 
-        (conversionRate * (acqTime + conversionCycles))));
+        (conversionRate * (acquireTime + conversionCycles))));
 }
 
 void getSamples(int* adcSamples) {
     int i = 0;
+    int* EOC = EOCaddress;
+    int* sampleAddr = sampleAddress;
     while(i < 5000) {
         // do not collect samples until EOC goes high
         while(!(*EOC)) {
@@ -121,13 +123,10 @@ int main()
     int peakToPeak;
     int average;
     
-    int* EOC = eocAddress;
-    int* sampleAddr = sampleAddress;
-    
     int adcSamples[5000];
     
     // set the clock rate from user-specified parameters, from the #defines
-    dclkDivider = getDclkDivider(dclkFreq, acqTime, conversionRate);
+    dclkDivider = getDclkDivider(dclkFreq, acqTime, convRate);
     writeDclkDivider(dclkDivider, &reg2);
     
     // run indefinitely (until shutdown)
