@@ -23,9 +23,9 @@
 #define reg1Default 0x30F0 //0011000011110000
 #define reg2Default 0x0000 //0000000000000000
 
-#define dclkFreq  //in MHz
+#define dclkFreq 100 //in MHz
 #define acqTime 4 //in cycles. can only be 4 or 10
-#define conversionRate //in KSPS
+#define conversionRate 50 //in KSPS
 
 
 void setDENandDWE() {
