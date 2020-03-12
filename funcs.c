@@ -27,7 +27,10 @@
 #define acqTime 4 //in cycles. can only be 4 or 10
 #define convRate 50 //in KSPS
 
-
+/* setDENandDWE
+ * sets the bit located at the DENDWEaddress to high
+ * Input:  none
+ * Output: none */
 void setDENandDWE() {
     int* denAndDwe = DENDWEaddress;
     *denAndDwe = 0x1;
@@ -58,21 +61,21 @@ void writeDclkDivider(int dclkDivider, int* reg2) {
 }
 
 
-/* getClkDivider
+/* getDclkDivider
  * Inputs: dclkFrequency (MHz)
  *         acqTime (clock cycles)
  *         conversionRate (KSPS)
  * Output: clock divider value, rounded to nearest whole number */
-int getDclkDivider(int dclkFrequency, int acquireTime, int conversionRate) {
-    // dclkFrequency inputted in MHz
-    // acquireTime in clock cycles (can only be 4 or 10. 4 by default)
-    // conversionRate inputted in KSPS
-    
+int getDclkDivider(int dclkFrequency, int acquireTime, int conversionRate) {    
     // NOTE: multiplied by 1000 to account for dclkFrequency being in MHz.
     return round(1000 * ((double)dclkFrequency / 
         (conversionRate * (acquireTime + conversionCycles))));
 }
 
+/* getSamples
+ * populates the inputted int array with samples from the ADC
+ * Input: adcSamples
+ * Output: none */
 void getSamples(int* adcSamples) {
     int i = 0;
     int* EOC = EOCaddress;
@@ -88,6 +91,11 @@ void getSamples(int* adcSamples) {
     return;
 }
 
+/* getPeakToPeak
+ * finds the min and max in the adcSamples list, and outputs their difference
+ * Inputs: adcSamples (int array)
+ *         N (size of adcSamples)
+ * Output: peak to peak value */
 int getPeakToPeak(int* adcSamples, int N) {
     int max = adcSamples[0];
     int min = adcSamples[0];
@@ -101,6 +109,11 @@ int getPeakToPeak(int* adcSamples, int N) {
     return (max - min);
 }
 
+/* getPeakToPeak
+ * finds the average value in the adcSamples list
+ * Inputs: adcSamples (int array)
+ *         N (size of adcSamples)
+ * Output: average value */
 int getAverage(int* adcSamples, int N) {
     int sum = 0;
     int i;
@@ -140,6 +153,3 @@ int main()
 
     return 0;
 }
-
-// 4 cycle acquisition ( can be extended to 10 by setting ACQ bit )
-// conversion is 22 cycles
