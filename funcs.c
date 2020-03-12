@@ -80,11 +80,11 @@ void getSamples(int* adcSamples) {
     int i = 0;
     int* EOC = EOCaddress;
     int* sampleAddr = sampleAddress;
-    // do not collect samples until EOC goes high
-    while(!(*EOC)) {
-        ;
-    }
     while(i < 5000) {
+        // do not collect samples until EOC goes high
+        while(!(*EOC)) {
+            ;
+        }
         // once EOC goes high, fill up our array.
         adcSamples[i++] = *sampleAddr;
     }
