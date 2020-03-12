@@ -77,11 +77,11 @@ void getSamples(int* adcSamples) {
     int i = 0;
     int* EOC = EOCaddress;
     int* sampleAddr = sampleAddress;
+    // do not collect samples until EOC goes high
+    while(!(*EOC)) {
+        ;
+    }
     while(i < 5000) {
-        // do not collect samples until EOC goes high
-        while(!(*EOC)) {
-            ;
-        }
         // once EOC goes high, fill up our array.
         adcSamples[i++] = *sampleAddr;
     }
@@ -113,7 +113,6 @@ int getAverage(int* adcSamples, int N) {
 
 int main()
 {
-    
     int reg0 = reg0Default;
     int reg1 = reg1Default;
     int reg2 = reg2Default;
